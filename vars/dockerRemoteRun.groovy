@@ -9,12 +9,12 @@ def call(Map config = [:]) {
     
     sh ("""
       ./remote-run-docker-img.sh \
-        -t \${config.host} \
-        -u \${config.user} \
-        -a \${config.app} \
-        -p \${config.bindPort}:\${config.containerPort} \
-        -e ${ENV_FILE}
-      \${config.img}
+        -t ${config.host} \
+        -u ${config.user} \
+        -a ${config.app} \
+        -p ${config.bindPort}:${config.containerPort} \
+        -e \${ENV_FILE}
+      ${config.img}
     """)
   }
 }
