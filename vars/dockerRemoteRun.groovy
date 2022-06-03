@@ -1,6 +1,6 @@
 
 // Run docker image to the remote host.
-def dockerRemoteRun(Map config = [:]) {
+def call(Map config = [:]) {
   withCredentials([file(credentialsId: config.env, variable: envFile)]) {
     sh ('''#!/usr/bin/env bash
       # Stop previously launched container by image name (Works in docker 1.9+)
