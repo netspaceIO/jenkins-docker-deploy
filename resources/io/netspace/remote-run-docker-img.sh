@@ -34,7 +34,7 @@ docker --host ${user}@${host} ps -aqf "name=${appName}" \
     | xargs -r docker --host ${host} stop
 docker --host ${user}@${host} run \
     --env-file ${envFile}
-    --name {config.appName} \
+    --name {appName} \
     --publish ${publish} \
     --detach \
     --rm \
