@@ -7,7 +7,7 @@ def call(Map config = [:]) {
 
   withCredentials([file(credentialsId: config.env, variable: "ENV_FILE")]) {
     
-    sh ("""
+    sh ('''
       ./remote-run-docker-img.sh \
         -t ${config.host} \
         -u ${config.user} \
@@ -15,6 +15,6 @@ def call(Map config = [:]) {
         -p ${config.bindPort}:${config.containerPort} \
         -e ${ENV_FILE}
       ${config.img}
-    """)
+    ''')
   }
 }
