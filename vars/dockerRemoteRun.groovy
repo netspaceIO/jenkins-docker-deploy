@@ -12,7 +12,7 @@ def call(Map config = [:]) {
         -u ${config.user} \
         -a ${config.app} \
         -p ${config.bindPort}:${config.containerPort} \
-        -e ${config.envFile}
+        -e ${env.envFile}
       ${config.img}
     """)
   }
