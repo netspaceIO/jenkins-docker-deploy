@@ -11,7 +11,7 @@ appName=""
 envFile=""
 
 # Read commandline args
-while getopts "u:t:" opt; do
+while getopts "a:u:t:p:e:" opt; do
   case "${opt}" in
     u) user=${OPTARG}
       ;;
