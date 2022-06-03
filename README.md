@@ -4,13 +4,13 @@ A Jenkins shared library for deploying to a remote host via SSH
 ### Motive
 
 In most cases, a delivery task is needed in order to deliver docker image to the remote host and then deploy the image through `docker run` command.
-Aim of this project is to automate delivery and deployment of docker container to the remote host.
+Aim of this project is to automate delivery and deployment of docker containers from your Jenkins server to the prod, test or dev server.
 
 ### Pre-requisites
 
 You need to configure
 * SSH Credentials on your jenkins controller (A server which you've deployed your Jenkins)
-* Add your public key (e.g., `id_rsa.pub` or `id_dsa.pub`) to the `authorized_keys` to the deployment server.
+* Add your public key (e.g., `id_rsa.pub` or `id_dsa.pub`) to the `authorized_keys` of the deployment server.
 * Install SSH agent plugin on your Jenkins
 * Configure the library in your Jenkins installation
 
