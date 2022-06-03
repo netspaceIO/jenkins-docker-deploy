@@ -1,18 +1,18 @@
 
 // Run docker image to the remote host.
 def call(Map config = [:]) {
+
+  // Load shell script
+  loadShellScript(name: "remote-run-docker-img.sh")
+
   withCredentials([file(credentialsId: config.env, variable: envFile)]) {
-    sh ("""#!/usr/bin/env bash
-      # Stop previously launched container by image name (Works in docker 1.9+)
-      docker --host ${config.sshUrl} ps -aqf "name=${config.appName}" \
-          | xargs -r docker --host ${config.sshUrl} stop
-      docker --host ${config.sshUrl} run \
-          --env-file ${envFile}
-          --name {config.appName} \
-          --publish ${config.bindPort}:${config.containerPort} \
-          --detach \
-          --rm \
-          --privileged \
+    sh ("""
+      ./remote-run-docker-img.sh \
+        -t ${config.host} \
+        -u ${config.user} \
+        -a ${config.app} \
+        -p ${config.bindPort}:${config.containerPort} \
+        -e ${config.envFile}
       ${config.img}
     """)
   }
