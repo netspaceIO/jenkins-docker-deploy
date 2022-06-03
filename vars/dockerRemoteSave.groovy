@@ -1,5 +1,5 @@
 // Push docker image to the remote host via SSH
-def dockerRemoteSave(Map config = [:]) {
+def call(Map config = [:]) {
   sshagent(credentials: [credentialsId]) {
     sh'''
       [ -d ~/.ssh ] || mkdir ~/.ssh
