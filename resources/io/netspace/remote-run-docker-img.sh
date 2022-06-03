@@ -34,7 +34,7 @@ docker --host ssh://${user}@${host} ps -aqf "name=${appName}" \
     | xargs -r docker --host ${host} stop
 docker --host ssh://${user}@${host} run \
     --env-file ${envFile} \
-    --name {appName} \
+    --name ${appName} \
     --publish ${publish} \
     --detach \
     --rm \
