@@ -49,7 +49,8 @@ pipeline {
         ENV_FILE_ID    = "<ID of the Env file>"
       }
       
-      dockerRemoteRun(
+      steps {
+        dockerRemoteRun(
           host: "${env.SSH_HOST}",
           user: "${env.SSH_USER}",
           img: "${env.DOCKER_IMG}",
@@ -58,6 +59,7 @@ pipeline {
           app: "${env.APP_NAME}",
           env: "{env.ENV_FILE_ID}"
         )
+      }
     }
   }
 }
