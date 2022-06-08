@@ -24,6 +24,8 @@ In your Jenkins, use the library as following
 
 pipeline {
 
+  agent { any }
+
   environment {
     DOCKER_IMG     = "<Your image here>"             // The image to push
     SSH_HOST       = "<Your Target server here>"       // The host to use
