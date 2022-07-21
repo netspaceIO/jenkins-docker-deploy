@@ -6,6 +6,8 @@ def call(Map config = [:]) {
   loadShellScript(name: "remote-run-docker-img.sh")
 
   withCredentials([file(credentialsId: config.env, variable: "ENV_FILE")]) {
+
+    echo "file... ${ENV_FILE}"
     
     sh ("""
       ./remote-run-docker-img.sh \
