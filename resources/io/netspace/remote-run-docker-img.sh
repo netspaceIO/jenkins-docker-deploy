@@ -37,5 +37,4 @@ docker --host ssh://${user}@${host} run \
     --name ${appName} \
     --publish ${publish} \
     --detach \
-    --rm \
     --privileged $@
