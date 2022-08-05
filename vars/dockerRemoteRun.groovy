@@ -4,12 +4,22 @@ def call(Map config = [:]) {
 
   // Load shell script
   loadShellScript(name: "remote-run-docker-img.sh")
-
-  echo "will use envfile ${config.env} to do the deployment..."
   
   withCredentials([file(credentialsId: config.env, variable: "ENV_FILE")]) {
     
-    sh ("""
+    if (config['bindVol'] && config['containerVol']) {
+      sh ("""
+      ./remote-run-docker-img.sh \
+        -t ${config.host} \
+        -u ${config.user} \
+        -a ${config.app} \
+        -v ${config.bindVol}:${config.containerVol} \
+        -p ${config.bindPort}:${config.containerPort} \
+        -e \${ENV_FILE} \
+      ${config.img}
+      """)
+    } else {
+      sh ("""
       ./remote-run-docker-img.sh \
         -t ${config.host} \
         -u ${config.user} \
@@ -17,6 +27,7 @@ def call(Map config = [:]) {
         -p ${config.bindPort}:${config.containerPort} \
         -e \${ENV_FILE} \
       ${config.img}
-    """)
+      """)
+    }
   }
 }
