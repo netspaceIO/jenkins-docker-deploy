@@ -11,7 +11,7 @@ appName=""
 envFile=""
 
 # Read commandline args
-while getopts "a:u:t:p:e:" opt; do
+while getopts "a:u:t:p:e:v:" opt; do
   case "${opt}" in
     u) user=${OPTARG}
       ;;
@@ -23,6 +23,8 @@ while getopts "a:u:t:p:e:" opt; do
       ;;
     e) envFile=${OPTARG}
       ;;
+    v) volume=${OPTARG}
+      ;;
   esac
 done
 
@@ -32,10 +34,23 @@ shift $((OPTIND-1))
 # Stop previously launched container by image name (Works in docker 1.9+)
 docker --host ssh://${user}@${host} ps -aqf "name=${appName}" \
     | xargs -r docker --host ${host} stop
-docker --host ssh://${user}@${host} run \
+
+if [ -z ${volume+x} ];
+then
+  docker --host ssh://${user}@${host} run \
     --env-file ${envFile} \
     --name ${appName} \
     --publish ${publish} \
     --detach \
     --rm \
     --privileged $@
+ else
+   docker --host ssh://${user}@${host} run \
+     --env-file ${envFile} \
+     --name ${appName} \
+     --volume ${volume} \
+     --publish ${publish} \
+     --detach \
+     --rm \
+     --privileged $@
+fi
