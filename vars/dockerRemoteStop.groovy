@@ -6,7 +6,7 @@ def call(Map config = [:]) {
       ./remote-docker-stop.sh \
         -t ${config.host} \
         -u ${config.user} \
-        -p ${config.port}
+        -n ${config.name}
     """
   }
 }
