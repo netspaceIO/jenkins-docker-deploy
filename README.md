@@ -11,14 +11,14 @@ Aim of this project is to automate delivery and deployment of docker containers 
 You need to configure
 * SSH Credentials on your jenkins controller (A server which you've deployed your Jenkins)
 * Add your public key (e.g., `id_rsa.pub` or `id_dsa.pub`) to the `authorized_keys` of the deployment server.
-* Install SSH agent plugin on your Jenkins
-* Configure the library in your Jenkins installation
+* Install [SSH agent plugin](https://plugins.jenkins.io/ssh-agent/) on your Jenkins
+* Configure the [library](https://www.jenkins.io/doc/book/pipeline/shared-libraries/) in your Jenkins installation
 
 ### Using the shared library
 
 In your Jenkins, use the library as following
 
-```jenkins
+```groovy
 // Declarative pipeline
 @Library('<name of your this library in your config>') _
 
@@ -26,9 +26,26 @@ pipeline {
 
   agent any
 
+  /*----------------------------------------------------------------------------------
+  | Environment variables with visibility to all your stages
+  |-----------------------------------------------------------------------------------
+  |
+  | Change the following environment variables w.r.t your infra config
+  |
+  | `DOCKER_IMG`     - The image you need to create.
+  | `SSH_USER`       - SSH User name.
+  | `SSH_HOST`       - Target SSH Host. This is the deployment server.
+  |                  - [Import Your Jenkins Public Key to the `authorized_keys`]
+  |                  - [Allow your Jenkins server to access `SSH_HOST` through port 22]
+  |                  - [It must have a running docker daemon]
+  | `CREDENTIALS_ID` - Credentials ID used by the script to perform
+  |                  SSH to the target host.
+  | 
+  */
   environment {
-    DOCKER_IMG     = "my-img"              // The image to push
-    SSH_USER       = "app-user"            // SSH user 
+    DOCKER_IMG     = "space/my-img"        // The image to push
+    SSH_USER       = "app-user"            // SSH user
+    SSH_HOST       = "your host address"
     CREDENTIALS_ID = "ssh-key-id"          // ID of the credentials
   }
 
@@ -37,25 +54,19 @@ pipeline {
     stage("Build") {
       steps {
         // Build the image
-        // sh "docker stop ${env.DOCKER_IMG} "
-        // sh "docker rm -f ${env.DOCKER_IMG} "
-        sh "docker build -t ${env.DOCKER_IMG} ."
+        sh "docker build -t ${env.DOCKER_IMG}:${env.BUILD_ID} ."
       }
     }
 
     stage("Deliver") {
 
-      environment {
-        SSH_HOST = "your host address"
-      }
-
       steps {
         // This will push the image `env.DOCKER_IMG` to the deployment host
         dockerRemoteSave(
-          credentialsId: env.CREDENTIALS_ID,
-          img: env.DOCKER_IMG,
-          host: env.SSH_HOST,
-          user: SSH_USER
+          credentialsId: "${env.CREDENTIALS_ID}",
+          img: "${env.DOCKER_IMG}",
+          host: "${env.SSH_HOST}",
+          user: "${SSH_USER}"
         )
       }
     }
@@ -64,17 +75,31 @@ pipeline {
   
     stage("Deploy") {
 
+      /*----------------------------------------------------------------------------------
+      | Environment variables visibility scope limited to the `Deploy` stage
+      |-----------------------------------------------------------------------------------
+      |
+      | Change the following environment variables w.r.t your infra config
+      |
+      | `BIND_PORT`      - (compulsory) Exposable port to the Guest OS of your `TARGET_HOST`
+      | `CONTAINER_PORT` - (compulsory) A unique docker port, mapped to the docker side.
+      | `APP_NAME`       - (compulsory) A unique name assigned to the docker container.
+      | `ENV_FILE_ID`    - (optional) A secret file (dotenv file)
+      |                  - [configured on your Jenkins installation.]
+      | `BIND_VOL`       - (optional) Mount volume (Guest OS folder)
+      | `CONTAINER_VOL`  - (optional) Container side of the mounted volume
+      | 
+      */
       environment {
         BIND_PORT      = 5000   // Your bind port - Exposed to other services public
         CONTAINER_PORT = 3333   // Container port - Not accessible to other service
         APP_NAME       = "my-app"
         ENV_FILE_ID    = "my-env" // Your env file
-        SSH_HOST       = "your-target-host" // Target server
       }
 
       steps {
 
-        // Stop previous container by port (if any)
+        // Stop previous container by name (if any)
         dockerRemoteStop(
           host: "${env.SSH_HOST}",
           user: "${env.SSH_USER}",
