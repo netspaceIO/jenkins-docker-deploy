@@ -32,8 +32,7 @@ shift $((OPTIND-1))
 [ "${1:-}" = "--" ] && shift
 
 # Stop previously launched container by image name (Works in docker 1.9+)
-docker --host ssh://${user}@${host} ps -aqf "name=${appName}" \
-    | xargs -r docker --host ${host} stop
+docker --host ssh://${user}@${host} ps -aqf "name=${appName}"
 
 if [ -z ${volume+x} ];
 then
