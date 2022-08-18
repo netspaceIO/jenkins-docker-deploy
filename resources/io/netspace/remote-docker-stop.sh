@@ -36,7 +36,7 @@ while getopts ":hn:t:u:" option; do
       t) # Enter Target host
          host=$OPTARG;;
       n) # Enter port
-         port=$OPTARG;;
+         name=$OPTARG;;
       u) # Enter user
          user=$OPTARG;;
       *) # Invalid option
