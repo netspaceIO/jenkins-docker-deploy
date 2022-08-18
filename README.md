@@ -51,7 +51,12 @@ pipeline {
 
       steps {
         // This will push the image `env.DOCKER_IMG` to the deployment host
-        dockerRemoteSave(credentialsId: env.CREDENTIALS_ID, img: env.DOCKER_IMG, host: env.SSH_HOST, user: SSH_USER)
+        dockerRemoteSave(
+          credentialsId: env.CREDENTIALS_ID,
+          img: env.DOCKER_IMG,
+          host: env.SSH_HOST,
+          user: SSH_USER
+        )
       }
     }
 
