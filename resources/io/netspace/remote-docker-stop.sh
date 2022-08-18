@@ -5,7 +5,7 @@
 ############################################################
 user=
 host=
-port=
+name=
 
 ############################################################
 # Help function                                            #
@@ -16,10 +16,10 @@ showHelp()
    echo ""
    echo Stops a docker container by port
    echo
-   echo "Syntax: $0 [-t|h|p|u]"
+   echo "Syntax: $0 [-t|h|n|u]"
    echo "options:"
    echo "h     Print this Help."
-   echo "p     Container port"
+   echo "n     Name of the docker stopped or running docker container"
    echo "t     Target SSH host running dockerd"
    echo "u     SSH user"
    echo
@@ -28,14 +28,14 @@ showHelp()
 ############################################################
 # Process the input options. Add options as needed.        #
 ############################################################
-while getopts ":hp:t:u:" option; do
+while getopts ":hn:t:u:" option; do
    case $option in
       h) # display Help
          showHelp
          exit;;
       t) # Enter Target host
          host=$OPTARG;;
-      p) # Enter port
+      n) # Enter port
          port=$OPTARG;;
       u) # Enter user
          user=$OPTARG;;
@@ -50,10 +50,4 @@ url="ssh://${user}@${host}"
 ############################################################
 # Process the input options. Add options as needed.        #
 ############################################################
-for id in $(docker ps -aq)
-do
-    if [[ $(docker --host "${url}" port "${id}") == *"${port}"* ]]; then
-        echo "stopping container ${id}"
-        docker --host "${url}" rm "${id}" -f >/dev/null 2>/dev/null
-    fi
-done
+docker --host "${url}" rm "${name}" -f >/dev/null 2>/dev/null
