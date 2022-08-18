@@ -11,17 +11,18 @@ Aim of this project is to automate delivery and deployment of docker containers 
 You need to configure
 * SSH Credentials on your jenkins controller (A server which you've deployed your Jenkins)
 * Add your public key (e.g., `id_rsa.pub` or `id_dsa.pub`) to the `authorized_keys` of the deployment server.
-* Install [SSH agent plugin](https://plugins.jenkins.io/ssh-agent/) on your Jenkins
+* Install [SSH agent plugin](https://plugins.jenkins.io/ssh-agent/) in your Jenkins installation
 * Configure the [library](https://www.jenkins.io/doc/book/pipeline/shared-libraries/) in your Jenkins installation
 
 ### Using the shared library
 
-In your Jenkins, use the library as following
+In your Jenkinsfile on the SCM, use the library in your declarative pipeline as following
 
 ```groovy
-// Declarative pipeline
+// Configure the library in your Jenkins installation
 @Library('<name of your this library in your config>') _
 
+// Now here comes the declarative pipeline
 pipeline {
 
   agent any
@@ -45,7 +46,7 @@ pipeline {
   environment {
     DOCKER_IMG     = "space/my-img"        // The image to push
     SSH_USER       = "app-user"            // SSH user
-    SSH_HOST       = "your host address"
+    SSH_HOST       = "your host address"   // Your target deployment server
     CREDENTIALS_ID = "ssh-key-id"          // ID of the credentials
   }
 
@@ -91,9 +92,9 @@ pipeline {
       | 
       */
       environment {
-        BIND_PORT      = 5000   // Your bind port - Exposed to other services public
-        CONTAINER_PORT = 3333   // Container port - Not accessible to other service
-        APP_NAME       = "my-app"
+        BIND_PORT      = 5000     // Your bind port - Exposed to other services public
+        CONTAINER_PORT = 3333     // Container port - Not accessible to other service
+        APP_NAME       = "my-app" // Docker container name
         ENV_FILE_ID    = "my-env" // Your env file
       }
 
@@ -115,10 +116,14 @@ pipeline {
           bindPort: "${env.BIND_PORT}",
           containerPort: "${env.CONTAINER_PORT}",
           app: "${env.APP_NAME}",
-          env: "${env.ENV_FILE_ID}"
+          env: "${env.ENV_FILE_ID}",
+          bindVol: "${env.BIND_VOL}",
+          containerVol: "${env.CONTAINER_VOL}"
         )
       }
     }
   }
 }
 ```
+
+That's all! Or, that's alot!
