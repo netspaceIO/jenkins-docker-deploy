@@ -7,5 +7,6 @@ def call(Map config = [:]) {
         -t ${config.host} \
         -u ${config.user} \
         -p ${config.port}
+    """
   }
 }
